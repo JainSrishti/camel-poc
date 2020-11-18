@@ -1,0 +1,12 @@
+{
+  "statusCode": 404,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": [
+    {
+      "response": "404 error found, Looks like something went wrong here"
+    }
+  ]
+
+}

@@ -1,0 +1,15 @@
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+
+  "body": [
+    {
+      "status": "Active",
+      "cibilValueFirst": "30987",
+      "cibilValueSecond": "111"
+    }
+  ]
+
+}

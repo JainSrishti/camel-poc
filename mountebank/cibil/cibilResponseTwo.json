@@ -1,0 +1,14 @@
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+
+  "body": [
+    {
+      "status": "Deactivated",
+      "cibilValueFirst": "0",
+      "cibilValueSecond": "0"
+    }
+  ]
+}

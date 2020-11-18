@@ -1,0 +1,53 @@
+{
+    "imposters": [
+      {
+        "port": 4600,
+        "protocol": "http",
+        "defaultResponse": {
+          "statusCode": 404,
+          "body": "Not Found.",
+          "headers": {}
+        },
+        "stubs": [
+            <% include blaze/blaze.ejs %>
+        ]
+      },
+      {
+              "port": 4601,
+              "protocol": "http",
+              "defaultResponse": {
+                "statusCode": 404,
+                "body": "Not Found.",
+                "headers": {}
+              },
+              "stubs": [
+                  <% include cibil/cibil.ejs %>
+              ]
+            },
+            {
+                    "port": 4602,
+                    "protocol": "http",
+                    "defaultResponse": {
+                      "statusCode": 404,
+                      "body": "Not Found.",
+                      "headers": {}
+                    },
+                    "stubs": [
+
+                        <% include idm/idm.ejs %>
+                    ]
+                  },
+                  {
+                          "port": 4603,
+                          "protocol": "http",
+                          "defaultResponse": {
+                            "statusCode": 404,
+                            "body": "Not Found.",
+                            "headers": {}
+                          },
+                          "stubs": [
+                              <% include liability/liability.ejs %>
+                          ]
+                        }
+    ]
+}
