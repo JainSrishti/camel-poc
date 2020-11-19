@@ -15,7 +15,6 @@ class CibilRequestProcessor(private val objectMapper: ObjectMapper): Processor {
     var log: Logger = LoggerFactory.getLogger(CibilRequestProcessor::class.java)
     
     override fun process(exchange: Exchange?) {
-        //val request: String = objectMapper.writeValueAsString(exchange?.getIn()?.getBody(User::class.java))
 
         val message = exchange?.getIn(NettyHttpMessage::class.java)
         val str1: String? = message?.getBody(String::class.java)
@@ -23,7 +22,7 @@ class CibilRequestProcessor(private val objectMapper: ObjectMapper): Processor {
         log.info("User in Cibil Request processor: $str1")
         
         val str: String = "[{\n" +
-                "    \"FNAME\": \"Shashank\",\n" +
+                "    \"FNAME\": \"Shashanka\",\n" +
                 "    \"DOB_DATE\": \"05-07-1985\",\n" +
                 "    \"SEX\": \"M\",\n" +
                 "    \"ADDRESS1\": \"Whitefield,Bangalore\",\n" +

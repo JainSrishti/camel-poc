@@ -26,9 +26,9 @@ class UserController(){
     private lateinit var context: CamelContext
 
     @RequestMapping(value = ["/process/user"], method = [RequestMethod.POST])
-    fun processUserRequest(@RequestBody user: User): Any? {
+    fun processUserRequest(@RequestBody user: User) {
         log.info("User$user")
-        //producerTemplate.sendBody("direct:start", user)
-        return consumerTemplate.receiveBody("direct:result")
+        producerTemplate.sendBody("direct:start", user)
+       /* return consumerTemplate.receiveBody("direct:result")*/
     }
 }

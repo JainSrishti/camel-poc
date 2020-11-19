@@ -15,31 +15,31 @@ class Router : RouteBuilder() {
     override fun configure() {
 
         var objectMapper: ObjectMapper = ObjectMapper()
+
         from("netty-http:http://localhost:8090/process/user")
-                .process { exchange ->
+                from("direct:start").process { exchange ->
                     val message = exchange.getIn(NettyHttpMessage::class.java)
                     val str: String = message.getBody(String::class.java)
                     val user: User = objectMapper.readValue(str, User::class.java)
                     log.info("User in main processor: $user")
-                }.to("direct:cibilNetty")
+                }/*.to("direct:cibilNetty")*/
+                .pipeline("direct:cibilNetty", "direct:idmNetty")
 
         from("direct:cibilNetty").to("log:DEBUG?showBody=true&showHeaders=true").process(objectMapper?.let { CibilRequestProcessor(it) })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .to("netty-http:http://localhost:4601/cibilPost").to("log:DEBUG?showBody=true&showHeaders=true").convertBodyTo(String::class.java)
-                .to("direct:idmNetty")
+                .to("netty-http:http://localhost:9001/cibilPost")
 
         from("direct:idmNetty").to("log:DEBUG?showBody=true&showHeaders=true").process(objectMapper?.let { IdmRequestProcessor(it) })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .to("netty-http:http://localhost:4602/idmPost").to("log:DEBUG?showBody=true&showHeaders=true").convertBodyTo(String::class.java)
-                //.to("direct:blazeVariableCalculation")
+                .to("netty-http:http://localhost:9000/idmPost")
 
         from("direct:blazeVariableCalculation").process(objectMapper?.let { BlazeRequestProcessor(it, "variable") })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:4600/blazePost")
-                .to("direct:LiabilityDB")
+               /* .to("direct:LiabilityDB")*/
 
         from("direct:nsdlNetty").process(objectMapper?.let { BlazeRequestProcessor(it, "none") })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
@@ -51,12 +51,11 @@ class Router : RouteBuilder() {
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:4603/liabilityPost")
-                .to("direct:blazeDecisionCalculation")
+                //.to("direct:blazeDecisionCalculation")
 
         from("direct:blazeDecisionCalculation").process(objectMapper?.let { BlazeRequestProcessor(it, "decision") })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:4600/blazePost")
-                to("direct:result")
     }
 }

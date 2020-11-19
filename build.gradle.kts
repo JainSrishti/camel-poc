@@ -24,6 +24,7 @@ dependencies {
 	}
 	implementation("org.springframework.data:spring-data-jpa:2.3.3.RELEASE")
 	implementation("org.hibernate:hibernate-core:5.4.22.Final")
+	implementation("org.apache.camel:camel-http:3.5.0")
 	implementation("org.apache.camel:camel-netty-http:3.5.0")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

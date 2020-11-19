@@ -20,8 +20,8 @@ class IdmRequestProcessor(private val objectMapper: ObjectMapper) : Processor {
         log.info("User in IDM Request processor: $str")
 
         val request: String = objectMapper.writeValueAsString(requestObj)
-        val finalRequest:String = "[$request]"
-        exchange?.getIn()?.setBody(finalRequest, String::class.java)
+        //val finalRequest:String = "[$request]"
+        exchange?.getIn()?.setBody(request, String::class.java)
     }
 
 }
