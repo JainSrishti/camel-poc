@@ -89,7 +89,7 @@ class LoadOnStartService {
         val routes = Router()
         val objectMapper = ObjectMapper()
         var camelContext: DefaultCamelContext = DefaultCamelContext()
-        routes.objectMapper=objectMapper
+        //routes.objectMapper=objectMapper
         /*if (endpointsFlipkart != null) {
             if (endpointsFlipkart.blaze!! && endpointsFlipkart.creditCard!! && endpointsFlipkart.creditVidya!!) {
                 camelContext.addRoutes(routes)

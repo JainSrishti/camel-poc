@@ -5,7 +5,8 @@ import org.apache.camel.Processor
 
 class LiabilityDbRequestProcessor: Processor {
     override fun process(exchange: Exchange?) {
-        TODO("Not yet implemented")
+        val finalRequest: String = "[{}]"
+        exchange?.getIn()?.setBody(finalRequest, String::class.java)
     }
 
 }

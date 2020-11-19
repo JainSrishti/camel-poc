@@ -17,20 +17,14 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.apache.camel:camel-spring-boot-starter:2.25.2")
+	implementation("org.apache.camel.springboot:camel-spring-boot-starter:3.5.0")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc"){
 		exclude(group = "org.apache.tomcat", module = "tomcat-jdbc")
 		exclude(group = "com.zaxxer", module = "HikariCP")
 	}
 	implementation("org.springframework.data:spring-data-jpa:2.3.3.RELEASE")
 	implementation("org.hibernate:hibernate-core:5.4.22.Final")
-	implementation("org.hibernate:hibernate-entitymanager:5.4.22.Final")
-	implementation("org.hibernate:hibernate-core:5.4.22.Final")
-	implementation("org.apache.camel:camel-jdbc:3.5.0")
-	implementation("org.apache.camel:camel-netty:3.6.0")
-	implementation("org.apache.camel:camel-jackson:3.5.0")
-	implementation("org.apache.camel:camel-http:3.5.0")
-	implementation("org.apache.camel:camel-netty-http:3.6.0")
+	implementation("org.apache.camel:camel-netty-http:3.5.0")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.apache.commons:commons-dbcp2:2.7.0")

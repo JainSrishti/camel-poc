@@ -11,12 +11,14 @@ class BlazeRequestProcessor(private val objectMapper: ObjectMapper, private val 
         if(type == "variable"){
             val requestObj: BlazeVariableCalculationRequest = BlazeVariableCalculationRequest("100CTD", "variable")
             val request: String = objectMapper.writeValueAsString(requestObj)
-            exchange?.getIn()?.body = request;
+            val finalRequest: String = "[$request]"
+            exchange?.getIn()?.setBody(finalRequest, String::class.java)
         }
         else if (type== "decision"){
             val requestObj: BlazeDecisionCalculationRequest = BlazeDecisionCalculationRequest("100CTD", "variable", 20, 45)
             val request: String = objectMapper.writeValueAsString(requestObj)
-            exchange?.getIn()?.body = request;
+            val finalRequest: String = "[$request]"
+            exchange?.getIn()?.setBody(finalRequest, String::class.java)
         }
     }
 
