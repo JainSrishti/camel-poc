@@ -13,12 +13,12 @@ class IdmRequestProcessor(private val objectMapper: ObjectMapper) : Processor {
     var log: Logger = LoggerFactory.getLogger(IdmRequestProcessor::class.java)
 
     override fun process(exchange: Exchange?) {
-        val requestObj: IDMRequest = IDMRequest("100CTD")
         val message = exchange?.getIn(NettyHttpMessage::class.java)
         val str: String? = message?.getBody(String::class.java)
 
         log.info("User in IDM Request processor: $str")
 
+        val requestObj: IDMRequest = IDMRequest("100CTD")
         val request: String = objectMapper.writeValueAsString(requestObj)
         //val finalRequest:String = "[$request]"
         exchange?.getIn()?.setBody(request, String::class.java)

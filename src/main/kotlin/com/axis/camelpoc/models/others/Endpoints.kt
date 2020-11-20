@@ -12,13 +12,13 @@ class Endpoints {
     var epid: Int? = null
 
     @Column
-    var creditCard: Boolean? = null
+    var cibil: Boolean? = null
 
     @Column
-    var creditVidya: Boolean? = null
+    var liability: Boolean? = null
 
     @Column
-    var sequential: Boolean? = null
+    var idm: Boolean? = null
 
     @Column
     var blaze: Boolean? = null
@@ -26,9 +26,9 @@ class Endpoints {
     override fun toString(): String {
         return "Endpoints{" +
                 "epid=" + epid +
-                ", creditCard=" + creditCard +
-                ", creditVidya=" + creditVidya +
-                ", isSequential=" + sequential +
+                ", creditCard=" + cibil +
+                ", creditVidya=" + liability +
+                ", isSequential=" + idm +
                 ", isBlaze=" + blaze +
                 '}'
     }

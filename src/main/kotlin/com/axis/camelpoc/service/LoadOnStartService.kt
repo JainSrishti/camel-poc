@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component
 @Component
 class LoadOnStartService {
 
-   /* @Autowired
-    lateinit var camelContext: DefaultCamelContext*/
     @Autowired
     lateinit var sourceSystemRepo: SourceSystemRepo
 
@@ -34,67 +32,43 @@ class LoadOnStartService {
     fun appReadyTestMethod(event: ApplicationReadyEvent?) {
 
         // saving data in SourceSystem, Endpoint, RequestResponse
-       val endpointConfigFlipkart = Endpoints()
-        endpointConfigFlipkart.blaze = true
-        endpointConfigFlipkart.sequential = true
-        endpointConfigFlipkart.creditCard =true
-        endpointConfigFlipkart.epid= 1
-        endpointConfigFlipkart.creditVidya=true
+        val endpointConfigMLP = Endpoints()
+        endpointConfigMLP.epid = 1
+        endpointConfigMLP.blaze = true
+        endpointConfigMLP.idm = true
+        endpointConfigMLP.cibil = true
+        endpointConfigMLP.liability = true
 
         val sourceSystem = SourceSystem()
-        sourceSystem.ssid= 1
-        sourceSystem.sourceAppName="Flipkart"
-        endpointsRepo.save(endpointConfigFlipkart)
+        sourceSystem.ssid = 1
+        sourceSystem.sourceAppName = "MLP"
+        endpointsRepo.save(endpointConfigMLP)
         sourceSystemRepo.save(sourceSystem)
 
-        val endpointConfigAmazon = Endpoints()
-        val sourceSystemAmaz = SourceSystem()
-        endpointConfigAmazon.creditVidya=true
-        endpointConfigAmazon.creditCard=true
-        endpointConfigAmazon.epid=2
-        endpointConfigAmazon.sequential=false
-        endpointConfigAmazon.blaze=true
-        sourceSystemAmaz.ssid=2
-        sourceSystemAmaz.sourceAppName="Amazon"
-        endpointsRepo.save(endpointConfigAmazon)
-        sourceSystemRepo.save(sourceSystemAmaz)
         val source: SourceSystem = sourceSystemRepo.findById(1).get()
         val endpoint: Endpoints = endpointsRepo.findById(1).get()
         val sourceId: Int? = source.ssid
         val endpointId: Int? = endpoint.epid
 
         val reqres = RequestResponse()
-        reqres.epid= endpointId
-        reqres.ssid= sourceId
+        reqres.epid = endpointId
+        reqres.ssid = sourceId
         reqresRepo.save(reqres)
         println(reqres)
 
-        val sourceTwo: SourceSystem = sourceSystemRepo.findById(2).get()
-        val endpointTwo: Endpoints = endpointsRepo.findById(2).get()
-        val sourceIdTwo: Int? = sourceTwo.ssid
-        val endpointIdTwo: Int? = endpointTwo.epid
-
-        val reqresponse = RequestResponse()
-        reqresponse.epid= endpointIdTwo
-        reqresponse.ssid= sourceIdTwo
-        reqresRepo.save(reqresponse)
-
-        // fetching rules for flipkart and amazon
-        val fetchForFlipkart: RequestResponse = reqresRepo.findById(1).get()
-        val endpointsFlipkart: Endpoints? = fetchForFlipkart.epid?.let { endpointsRepo.findById(it).get() }
-
+        // fetching rules for MLP
+        val fetchForMLP: RequestResponse = reqresRepo.findById(1).get()
+        val endpointsMLP: Endpoints? = fetchForMLP.epid?.let { endpointsRepo.findById(it).get() }
 
         // adding rules in camel context
-
         val routes = Router()
 
         var camelContext: DefaultCamelContext = DefaultCamelContext()
-        if (endpointsFlipkart != null) {
-            if (endpointsFlipkart.blaze!! && endpointsFlipkart.creditCard!! && endpointsFlipkart.creditVidya!!) {
+        if (endpointsMLP != null) {
+            if (endpointsMLP.blaze!! && endpointsMLP.idm!! && endpointsMLP.cibil!! && endpointsMLP.liability!!) {
                 camelContext.addRoutes(routes)
             }
         }
-        //camelContext.addRoutes(routes)
         camelContext.start()
     }
 }
