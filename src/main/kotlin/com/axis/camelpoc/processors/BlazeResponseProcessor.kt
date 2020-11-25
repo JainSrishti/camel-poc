@@ -1,4 +1,4 @@
-package com.axis.camelpoc.processors.blaze
+package com.axis.camelpoc.processors
 
 import org.apache.camel.Exchange
 import org.apache.camel.Processor

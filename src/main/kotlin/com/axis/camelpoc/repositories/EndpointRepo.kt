@@ -1,4 +1,4 @@
-package com.axis.camelpoc.repo
+package com.axis.camelpoc.repositories
 
 import org.springframework.stereotype.Repository
 import com.axis.camelpoc.models.others.Endpoints

@@ -1,19 +1,24 @@
 package com.axis.camelpoc.routes
 
+import org.apache.camel.Exchange
+import org.apache.camel.CamelExchangeException
 import com.axis.camelpoc.models.User
-import com.axis.camelpoc.processors.blaze.BlazeRequestProcessor
-import com.axis.camelpoc.processors.cibil.CibilRequestProcessor
+import com.axis.camelpoc.models.workflow.ExternalIntegratorAdapters
 import com.axis.camelpoc.processors.idm.IdmRequestProcessor
+import com.axis.camelpoc.processors.BlazeRequestProcessor
+import com.axis.camelpoc.processors.cibil.CibilRequestProcessor
 import com.axis.camelpoc.processors.liability.LiabilityDbRequestProcessor
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.camel.CamelExchangeException
-import org.apache.camel.Exchange
 import org.apache.camel.ValidationException
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.netty.http.NettyHttpMessage
 import org.apache.camel.component.netty.http.NettyHttpOperationFailedException
 
-class Router : RouteBuilder() {
+class Router(private var endpoints: List<ExternalIntegratorAdapters> = emptyList()) : RouteBuilder() {
+
+    fun setEndpoints(endpoints: List<ExternalIntegratorAdapters>) {
+        this.endpoints = endpoints
+    }
 
     override fun configure() {
 
@@ -22,7 +27,7 @@ class Router : RouteBuilder() {
         onException(NettyHttpOperationFailedException::class.java)
                 .useOriginalMessage()
                 .maximumRedeliveries(3)
-                .handled(true)
+                .handled(false)
                 .transform(exceptionMessage())
 
         onException(CamelExchangeException::class.java)
@@ -48,21 +53,21 @@ class Router : RouteBuilder() {
 
         from("direct:cibilNetty")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
-                .process(objectMapper?.let { CibilRequestProcessor(it) })
+                .process(objectMapper?.let { CibilRequestProcessor() })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:9001/cibilPost")
 
         from("direct:idmNetty")
-                .to("log:DEBUG?showBody=true&showHeaders=true")
-                .process(objectMapper?.let { IdmRequestProcessor(it) })
+                .to("log:DEBUG?showBody=true&showHeaders=true").doTry()
+                .process(objectMapper?.let { IdmRequestProcessor() })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:9000/idmPost")
 
         from("direct:blazeVariableCalculation")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
-                .process(objectMapper?.let { BlazeRequestProcessor(it, "variable") })
+                .process(objectMapper?.let { BlazeRequestProcessor() })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:9002/blazeVariableCalculate")
@@ -76,7 +81,7 @@ class Router : RouteBuilder() {
 
         from("direct:blazeDecisionCalculation")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
-                .process(objectMapper?.let { BlazeRequestProcessor(it, "decision") })
+                .process(objectMapper?.let { BlazeRequestProcessor() })
                 .setHeader(Exchange.HTTP_METHOD, simple("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .to("netty-http:http://localhost:9002/blazeDecisionCalculate")

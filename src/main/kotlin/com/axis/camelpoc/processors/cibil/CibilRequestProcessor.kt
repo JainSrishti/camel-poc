@@ -10,8 +10,9 @@ import org.apache.camel.component.netty.http.NettyHttpMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class CibilRequestProcessor(private val objectMapper: ObjectMapper): Processor {
+class CibilRequestProcessor(): Processor {
 
+    val objectMapper: ObjectMapper? = null
     var log: Logger = LoggerFactory.getLogger(CibilRequestProcessor::class.java)
     
     override fun process(exchange: Exchange?) {
