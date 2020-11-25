@@ -1,13 +1,14 @@
 package com.axis.camelpoc.processors.liability
 
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.apache.camel.component.netty.http.NettyHttpMessage
 
-class LiabilityDbRequestProcessor: Processor {
+class LiabilityDbRequestProcessor(private val objectMapper: ObjectMapper) : Processor {
 
     var log: Logger = LoggerFactory.getLogger(LiabilityDbRequestProcessor::class.java)
     override fun process(exchange: Exchange?) {

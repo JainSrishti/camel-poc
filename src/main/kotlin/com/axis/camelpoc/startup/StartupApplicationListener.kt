@@ -39,9 +39,9 @@ class StartupApplicationListener : ApplicationListener<ApplicationReadyEvent> {
                         5000
                 ),
                 ExternalIntegratorAdapters("3",
-                        "blazeVariableCalculate",
+                        "blazevariable",
                         "http://localhost:9002/blazeVariableCalculate",
-                        "BlazeRequestProcessor",
+                        "BlazeVariableCalculationRequestProcessor",
                         "application/json",
                         "netty-http",
                         "POST",
@@ -61,9 +61,9 @@ class StartupApplicationListener : ApplicationListener<ApplicationReadyEvent> {
                         5000
                 ),
                 ExternalIntegratorAdapters("5",
-                        "blazeDecisionCalculate",
+                        "blazedecision",
                         "http://localhost:9002/blazeDecisionCalculate",
-                        "BlazeRequestProcessor",
+                        "BlazeDecisionCalculationRequestProcessor",
                         "application/json",
                         "netty-http",
                         "POST",

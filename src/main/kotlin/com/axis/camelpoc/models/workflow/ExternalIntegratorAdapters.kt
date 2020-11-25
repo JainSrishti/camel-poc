@@ -38,6 +38,8 @@ class ExternalIntegratorAdapters(//@Id @Column(name = "external_integrator_id")
                                  @PrimaryKeyJoinColumn
                                  private var externalIntegratorConfiguration: ExternalIntegratorConfiguration*/) {
 
+
+
     fun getIntegratorEndpointConnectionString(): String {
         return this.integratorEndpointConnectionString
     }

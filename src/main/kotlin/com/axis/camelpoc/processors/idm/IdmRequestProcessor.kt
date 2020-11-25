@@ -8,9 +8,8 @@ import org.apache.camel.component.netty.http.NettyHttpMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class IdmRequestProcessor() : Processor {
+class IdmRequestProcessor(private val objectMapper: ObjectMapper) : Processor {
 
-    val objectMapper: ObjectMapper? = null
     var log: Logger = LoggerFactory.getLogger(IdmRequestProcessor::class.java)
 
     override fun process(exchange: Exchange?) {
@@ -19,9 +18,8 @@ class IdmRequestProcessor() : Processor {
 
         log.info("User in IDM Request processor: $str")
 
-        val requestObj: IDMRequest = IDMRequest("100CTD")
-        val request: String? = objectMapper?.writeValueAsString(requestObj)
-        //val finalRequest:String = "[$request]"
+        val requestObj = IDMRequest("100CTD")
+        val request: String = objectMapper.writeValueAsString(requestObj)
         exchange?.getIn()?.setBody(request, String::class.java)
     }
 
