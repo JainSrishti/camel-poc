@@ -7,63 +7,45 @@ import javax.persistence.Table
 
 
 //@Entity
-//@Table(name = "source_system")
-class SourceSystem(//@Id @Column(name = "source_system_id")
-                   private var sourceSystemId: String,
+//@Table(name = "source_systems")
+class SourceSystem(//@Id @Column(name = "id")
+                   private var id: String,
 
-                   //@Column(name = "source_system_name")
-                   private var sourceSystemName: String,
+                   //@Column(name = "name", unique = true)
+                   private var name: String,
 
-                   //@Column(name = "source_system_connection_string")
-                   private var sourceSystemConnectionString: String,
+                   //@Column(name = "app_code")
+                   private var applicationCode: Int,
 
-                   //@Column(name = "source_system_router")
+                   //@Column(name = "router_class")
                    private var sourceSystemRouter: String,
 
-                   //@Column(name = "source_system_connection_type")
-                   private var sourceSystemConnectionType: String,
+                   //@Column(name = "source_url")
+                   private var sourceUrl: String,
 
-                   //@Column(name = "source_system_connection_method")
-                   private var sourceSystemConnectionMethod: String,
-
-                   //@Column(name = "source_system_connection_timeout")
-                   private var sourceSystemConnectionTimeout: Int,
-
-                   //@Column(name = "source_system_read_timeout")
-                   private var sourceSystemReadTimeout: Int,
-
-                   private var endpoints: MutableList<ExternalIntegratorAdapters>) {
+                   private var endpoints: MutableList<Endpoints>) {
 
     fun getSourceSystemId(): String {
-        return this.sourceSystemId
+        return this.id
     }
 
     fun getSourceSystemName(): String {
-        return this.sourceSystemName
+        return this.name
     }
 
-    fun getSourceSystemConnectionString(): String {
-        return this.sourceSystemConnectionString
+    fun getSourceSystemConnectionString(): Int {
+        return this.applicationCode
     }
 
     fun getSourceSystemRouter(): String {
         return this.sourceSystemRouter
     }
 
-    fun getEndpoints(): MutableList<ExternalIntegratorAdapters> {
+    fun getSourceUrl(): String {
+        return this.sourceUrl
+    }
+
+    fun getEndpoints(): MutableList<Endpoints> {
         return endpoints
     }
-    override fun toString(): String {
-
-        return "SourceSystem(sourceSystemId='$sourceSystemId', " +
-                "sourceSystemName='$sourceSystemName', " +
-                "sourceSystemConnectionString='$sourceSystemConnectionString', " +
-                "sourceSystemRouter='$sourceSystemRouter', " +
-                "sourceSystemConnectionType='$sourceSystemConnectionType', " +
-                "sourceSystemConnectionMethod='$sourceSystemConnectionMethod', " +
-                "sourceSystemConnectionTimeout=$sourceSystemConnectionTimeout, " +
-                "sourceSystemReadTimeout=$sourceSystemReadTimeout)"
-    }
-
-
 }

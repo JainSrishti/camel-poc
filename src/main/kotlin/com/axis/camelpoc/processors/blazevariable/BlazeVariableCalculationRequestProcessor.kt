@@ -16,7 +16,7 @@ class BlazeVariableCalculationRequestProcessor(private val objectMapper: ObjectM
         val message = exchange?.getIn(NettyHttpMessage::class.java)
         val str: String? = message?.getBody(String::class.java)
 
-        log.info("User in Blaze Request processor: $str")
+        log.info("User in Blaze Variable Request processor: $str")
 
         val requestObj = BlazeVariableCalculationRequest("100CTD", "variable")
         val request: String? = objectMapper?.writeValueAsString(requestObj)
