@@ -15,4 +15,17 @@ data class User(@JsonProperty("FNAME") val name: String,
                 @JsonProperty("PRODUCT_CODE") val productCode: String,
                 @JsonProperty("MOBILE_NO") val mobile: String,
                 @JsonProperty("LOAN_AMOUNT") val loan: String) {
+
+    override fun toString(): String {
+        return "User(name='$name', " +
+                "dateOfBirth='$dateOfBirth', " +
+                "sex='$sex', " +
+                "addressLineOne='$addressLineOne', " +
+                "state='$state', " +
+                "zipCode='$zipCode', " +
+                "panNumber='$panNumber', " +
+                "productCode='$productCode', " +
+                "mobile='$mobile', " +
+                "loan='$loan')"
+    }
 }

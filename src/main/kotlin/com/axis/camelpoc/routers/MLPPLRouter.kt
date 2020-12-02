@@ -29,12 +29,11 @@ class MLPPLRouter : Router() {
 
         endpoints.sortWith(EndpointPriorityComparator)
 
-       /* onException(NettyHttpOperationFailedException::class.java)
+       onException(NettyHttpOperationFailedException::class.java)
                 .useOriginalMessage()
-                .onWhen(header(Headers.ROUTE_ID.value).contains("idm"))
                 .maximumRedeliveries(3)
                 .handled(true)
-                .to("direct:blazevariable")
+                .transform(exceptionMessage())
 
         onException(CamelExchangeException::class.java)
                 .useOriginalMessage()
@@ -46,12 +45,12 @@ class MLPPLRouter : Router() {
                 .useOriginalMessage()
                 .maximumRedeliveries(3)
                 .handled(true)
-                .transform(exceptionMessage())*/
+                .transform(exceptionMessage())
 
-       onException(MLPPLIDMException::class.java)
+      /* onException(MLPPLIDMException::class.java)
                 .useOriginalMessage()
                 .handled(true)
-                .to("direct:blazevariable")
+                .to("direct:blazevariable")*/
 
         for (endpoint in endpoints.iterator()) {
             if (endpoint.isEndpointMandatory()) {
@@ -60,11 +59,10 @@ class MLPPLRouter : Router() {
 
             from("direct:" + endpoint.getEndpointRouteName())
                     //.doTry()
-                    .process(getProcessor(endpoint.getEndpointProcessor(), endpoint.getEndpointRouteName(), objectMapper))
+                    .process(getRequestProcessor(endpoint.getEndpointProcessor(), endpoint.getEndpointRouteName(), objectMapper))
                     .to("log:DEBUG?showBody=true&showHeaders=true")
                     .setHeader(Exchange.HTTP_METHOD, simple(endpoint.getEndpointRequestMethod()))
                     .setHeader(Exchange.CONTENT_TYPE, constant(endpoint.getEndpointContentType()))
-                    .setHeader(Headers.ROUTE_ID.value, constant(endpoint.getEndpointRouteName()))
                     .to(endpoint.getEndpointRequestType() + ":" + endpoint.getEndpointUrl())
                    /* .doCatch(NettyHttpOperationFailedException::class.java)
                     .process(Processor() {
@@ -76,16 +74,16 @@ class MLPPLRouter : Router() {
                     })*/
         }
 
-        from("netty-http:$source").process { exchange ->
+        from("netty-http:$source")/*.process { exchange ->
             val message = exchange.getIn(NettyHttpMessage::class.java)
             val str: String = message.getBody(String::class.java)
             val user: User = objectMapper.readValue(str, User::class.java)
             log.info("User in main processor: $user")
-        }
+        }*/
                 .pipeline(*endpointNames.toTypedArray())
     }
 
-    private fun getProcessor(processorClassName: String, name: String, objectMapper: ObjectMapper): Processor {
+    private fun getRequestProcessor(processorClassName: String, name: String, objectMapper: ObjectMapper): Processor {
         var processorClass = Class.forName("com.axis.camelpoc.processors.$name.$processorClassName")
 
         return processorClass.getDeclaredConstructor(ObjectMapper::class.java).newInstance(objectMapper) as Processor
