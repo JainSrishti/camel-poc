@@ -86,20 +86,50 @@ class StartupApplicationListener : ApplicationListener<ApplicationReadyEvent> {
         var camelContext: CamelContext = DefaultCamelContext()
         // Set parameters in source
         var mlpSource: SourceSystem = SourceSystem("1",
-                "MLP",
+                "MLP-PL",
                 1,
                 "MLPPLRouter",
                 "http://localhost:8090/process/user",
                 endpoints
         )
+
+        var endpointsNew = mutableListOf<Endpoints>(
+                Endpoints("1",
+                        "cibilTest",
+                        "http://localhost:9001/cibilPost",
+                        "application/json",
+                        "netty-http",
+                        "POST",
+                        "CibilRequestProcessor",
+                        "",
+                        "",
+                        5000,
+                        1,
+                        true
+                ))
+
+        var testSource: SourceSystem = SourceSystem("2",
+                "Test",
+                2,
+                "TestRouter",
+                "http://localhost:8100/process/user",
+                endpointsNew
+        )
+
+        var sources: List<SourceSystem> = mutableListOf(mlpSource, testSource)
+
         // Start for loop for all sources
-        var router = Class.forName("com.axis.camelpoc.routers." + mlpSource.getSourceSystemRouter())
+        for(source in sources) {
+            var router = Class.forName("com.axis.camelpoc.routers." + source.getSourceSystemRouter())
 
-        var routerInstance = router.getDeclaredConstructor().newInstance() as Router
+            var routerInstance = router.getDeclaredConstructor().newInstance() as Router
 
-        routerInstance.source = mlpSource.getSourceUrl()
-        routerInstance.endpoints = mlpSource.getEndpoints()
-        camelContext.addRoutes(routerInstance)
+            routerInstance.sourceName = source.getSourceSystemName()
+            routerInstance.sourceUrl = source.getSourceUrl()
+            routerInstance.endpoints = source.getEndpoints()
+
+            camelContext.addRoutes(routerInstance)
+        }
 
         //End of FOR LOOP for all sources
         camelContext.start()
