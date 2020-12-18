@@ -1,4 +1,4 @@
-package com.axis.camelpoc.processors.blazedecision
+package com.axis.camelpoc.processors.blaze
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,6 +16,7 @@ class BlazeDecisionCalculationRequestProcessor : RequestProcessor() {
         val str: String? = message?.getBody(String::class.java)
 
         log.info("User in Blaze Decision Request processor: $str")
+
         if(sourceName == "MLP-PL"){
             val requestObj = BlazeDecisionCalculationRequest("100CTD", "variable", 20, 45)
             val request: String = objectMapper.writeValueAsString(requestObj)

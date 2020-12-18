@@ -1,66 +1,83 @@
 package com.axis.camelpoc.models.workflow
 
-import javax.persistence.*
-
 //@Entity
 //@Table(name = "endpoints")
-class Endpoints(//@Id @Column(name = "id")
-                private var id: String,
+class Endpoints(
+        //@Id @Column(name = "id")
+        private var id: String,
 
-                //@Column(name = "route_name", unique = true)
-                private var routeName: String,
+        //@Column(name = "name")
+        private val endpointName: String,
 
-                //@Column(name = "url")
-                private var url: String,
+        //@Column(name = "route_name", unique = true)
+        private var routeName: String,
 
-                //@Column(name = "content_type")
-                private var contentType: String,
+        //@Column(name = "route_type")
+        private var routeType: String,
 
-                //@Column(name = "request_type")
-                private var requestType: String,
+        //@Column(name = "url")
+        private var url: String,
 
-                //@Column(name = "request_method")
-                private var requestMethod: String,
+        //@Column(name = "content_type")
+        private var contentType: String,
 
-                //@Column(name = "processor")
-                private var processor: String,
+        //@Column(name = "request_type")
+        private var requestType: String,
 
-                //@Column(name = "aggregator")
-                private var aggregator: String,
+        //@Column(name = "request_method")
+        private var requestMethod: String,
 
-                //@Column(name = "exception")
-                private var exception: String,
+        //@Column(name = "request_processor")
+        private var requestProcessor: String?,
 
-                //@Column(name = "connection_timeout")
-                private var connectionTimeout: Int,
+        //@Column(name = "response_processor")
+        private var responseProcessor: String?,
 
-                //@Column(name = "priority")
-                private var priority: Int,
+        //@Column(name = "aggregator")
+        private var aggregator: String?,
 
-                //@Column(name = "mandatory")
-                private var mandatory: Boolean) {
+        //@Column(name = "exception")
+        private var exception: String?,
+
+        //@Column(name = "maximum_request_count")
+        private val maximumRequestCount: Long,
+
+        //@Column(name = "connection_timeout")
+        private var connectionTimeout: Int) {
 
     fun getEndpointId(): String {
         return this.id
+    }
+
+    fun getEndpointName(): String {
+        return this.endpointName
     }
 
     fun getEndpointRouteName(): String {
         return this.routeName
     }
 
-    fun getEndpointUrl(): String {
+    fun getRouteType(): String {
+        return this.routeType
+    }
+
+    fun getUrl(): String {
         return this.url
     }
 
-    fun getEndpointProcessor(): String {
-        return this.processor
+    fun getRequestProcessor(): String? {
+        return this.requestProcessor
     }
 
-    fun getEndpointAggregator(): String {
+    fun getResponseProcessor(): String? {
+        return this.responseProcessor
+    }
+
+    fun getEndpointAggregator(): String? {
         return this.aggregator
     }
 
-    fun getEndpointException(): String {
+    fun getEndpointException(): String? {
         return this.exception
     }
 
@@ -68,23 +85,19 @@ class Endpoints(//@Id @Column(name = "id")
         return this.contentType
     }
 
-    fun getEndpointRequestType(): String {
+    fun getRequestType(): String {
         return this.requestType
     }
 
-    fun getEndpointRequestMethod(): String {
+    fun getRequestMethod(): String {
         return this.requestMethod
     }
 
-    fun getEndpointConnectionTimeout(): Int {
+    fun getMaximumRequestCount(): Long {
+        return this.maximumRequestCount
+    }
+
+    fun getConnectionTimeout(): Int {
         return this.connectionTimeout
-    }
-
-    fun getEndpointPriority(): Int {
-        return this.priority
-    }
-
-    fun isEndpointMandatory(): Boolean {
-        return this.mandatory;
     }
 }

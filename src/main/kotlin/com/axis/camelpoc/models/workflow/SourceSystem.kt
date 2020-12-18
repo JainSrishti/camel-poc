@@ -1,31 +1,25 @@
 package com.axis.camelpoc.models.workflow
 
-import javax.persistence.Id
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Table
-
 
 //@Entity
 //@Table(name = "source_systems")
 class SourceSystem(//@Id @Column(name = "id")
-                   private var id: String,
+        private var id: Int,
 
-                   //@Column(name = "name", unique = true)
-                   private var name: String,
+        //@Column(name = "name", unique = true)
+        private var name: String,
 
-                   //@Column(name = "app_code")
-                   private var applicationCode: Int,
+        //@Column(name = "app_code")
+        private var applicationCode: Int,
 
-                   //@Column(name = "router_class")
-                   private var sourceSystemRouter: String,
+        //@Column(name = "router_class")
+        private var sourceSystemRouter: String,
 
-                   //@Column(name = "source_url")
-                   private var sourceUrl: String,
+        private var endpoints: MutableList<Endpoints>,
 
-                   private var endpoints: MutableList<Endpoints>) {
+        private var workflows: MutableList<Workflow>) {
 
-    fun getSourceSystemId(): String {
+    fun getSourceSystemId(): Int {
         return this.id
     }
 
@@ -33,7 +27,7 @@ class SourceSystem(//@Id @Column(name = "id")
         return this.name
     }
 
-    fun getSourceSystemConnectionString(): Int {
+    fun getSourceSystemApplicationCode(): Int {
         return this.applicationCode
     }
 
@@ -41,11 +35,11 @@ class SourceSystem(//@Id @Column(name = "id")
         return this.sourceSystemRouter
     }
 
-    fun getSourceUrl(): String {
-        return this.sourceUrl
-    }
-
     fun getEndpoints(): MutableList<Endpoints> {
         return endpoints
+    }
+
+    fun getWorkflow(): MutableList<Workflow> {
+        return workflows
     }
 }

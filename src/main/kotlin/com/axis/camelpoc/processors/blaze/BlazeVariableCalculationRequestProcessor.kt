@@ -1,11 +1,11 @@
-package com.axis.camelpoc.processors.blazevariable
+package com.axis.camelpoc.processors.blaze
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.apache.camel.Exchange
-import com.axis.camelpoc.models.requests.BlazeVariableCalculationRequest
 import com.axis.camelpoc.processors.RequestProcessor
 import org.apache.camel.component.netty.http.NettyHttpMessage
+import com.axis.camelpoc.models.requests.BlazeVariableCalculationRequest
 
 class BlazeVariableCalculationRequestProcessor : RequestProcessor() {
     override fun process(exchange: Exchange?) {

@@ -1,17 +1,14 @@
 package com.axis.camelpoc.routers
 
-import com.axis.camelpoc.processors.RequestProcessor
-import com.axis.camelpoc.processors.ResponseProcessor
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.camel.CamelExchangeException
+import com.axis.camelpoc.processors.RequestProcessor.Companion.getRequestProcessor
 import org.apache.camel.Exchange
-import org.apache.camel.Processor
 import org.apache.camel.ValidationException
+import org.apache.camel.CamelExchangeException
 import org.apache.camel.component.netty.http.NettyHttpOperationFailedException
 
-class TestRouter: Router() {
+class TestRouter : Router() {
+
     override fun configure() {
-        var objectMapper: ObjectMapper = ObjectMapper()
 
         onException(NettyHttpOperationFailedException::class.java)
                 .useOriginalMessage()
@@ -33,13 +30,21 @@ class TestRouter: Router() {
 
         for (endpoint in endpoints.iterator()) {
 
-            from("direct:" + endpoint.getEndpointRouteName())
-                    .process(getRequestProcessor(endpoint.getEndpointProcessor(), endpoint.getEndpointRouteName(), sourceName))
-                    .to("log:DEBUG?showBody=true&showHeaders=true")
-                    .setHeader(Exchange.HTTP_METHOD, simple(endpoint.getEndpointRequestMethod()))
-                    .setHeader(Exchange.CONTENT_TYPE, constant(endpoint.getEndpointContentType()))
-                    .to(endpoint.getEndpointRequestType() + ":" + endpoint.getEndpointUrl())
-                    .process()
+            if (endpoint.getRouteType().equals("source",
+                            true)) {
+                sourceUrl = endpoint.getUrl()
+            } else {
+                from("direct:" + endpoint.getEndpointRouteName())
+                        .process(endpoint.getRequestProcessor()?.let {
+                            getRequestProcessor(it,
+                                    endpoint.getEndpointName(),
+                                    sourceName)
+                        })
+                        .to("log:DEBUG?showBody=true&showHeaders=true")
+                        .setHeader(Exchange.HTTP_METHOD, simple(endpoint.getRequestMethod()))
+                        .setHeader(Exchange.CONTENT_TYPE, constant(endpoint.getEndpointContentType()))
+                        .to(endpoint.getRequestType() + ":" + endpoint.getUrl())
+            }
         }
 
         from("netty-http:$sourceUrl")

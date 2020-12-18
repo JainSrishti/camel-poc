@@ -9,5 +9,13 @@ abstract class RequestProcessor() : Processor {
 
     companion object{
         val objectMapper: ObjectMapper = ObjectMapper()
+
+        fun getRequestProcessor(processorClassName: String, name: String, sourceName: String?): Processor {
+            var processorClass = Class.forName("com.axis.camelpoc.processors.$name.$processorClassName")
+
+            var requestProcessor = processorClass.getDeclaredConstructor().newInstance() as RequestProcessor
+            requestProcessor.sourceName = sourceName
+            return requestProcessor
+        }
     }
 }

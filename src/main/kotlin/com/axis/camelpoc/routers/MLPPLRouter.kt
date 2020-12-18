@@ -1,34 +1,18 @@
 package com.axis.camelpoc.routers
 
 import org.apache.camel.Exchange
-import org.apache.camel.Processor
 import org.apache.camel.CamelExchangeException
 import org.apache.camel.ValidationException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.axis.camelpoc.enums.Headers
-import com.axis.camelpoc.models.workflow.Endpoints
-import com.axis.camelpoc.processors.RequestProcessor
-import com.axis.camelpoc.processors.ResponseProcessor
+import com.axis.camelpoc.utilities.DynamicRouteBean
+import org.apache.camel.Processor
+import org.apache.camel.builder.Builder.bean
 import org.apache.camel.component.netty.http.NettyHttpOperationFailedException
+import com.axis.camelpoc.processors.RequestProcessor.Companion.getRequestProcessor
+import com.axis.camelpoc.processors.ResponseProcessor.Companion.getResponseProcessor
 
 class MLPPLRouter : Router() {
 
-    class EndpointPriorityComparator {
-
-        companion object : Comparator<Endpoints> {
-            override fun compare(a: Endpoints, b: Endpoints): Int =
-                    a.getEndpointPriority() - b.getEndpointPriority()
-        }
-    }
-
     override fun configure() {
-
-        var objectMapper: ObjectMapper = ObjectMapper()
-        var flow0 = mutableListOf<String>()
-        var flow1 = mutableListOf<String>()
-        var flow2 = mutableListOf<String>()
-
-        endpoints.sortWith(EndpointPriorityComparator)
 
         onException(NettyHttpOperationFailedException::class.java)
                 .useOriginalMessage()
@@ -48,35 +32,46 @@ class MLPPLRouter : Router() {
                 .handled(true)
                 .transform(exceptionMessage())
 
-        flow0.add("direct:cibil")
-        flow0.add("direct:idm")
+        sourceWorkflow.sortWith(WorkFlowPriorityComparator)
 
-        flow2.add("direct:blazevariable")
-        flow2.add("direct:liability")
-        flow2.add("direct:blazedecision")
+        val startEndpoint = sourceWorkflow[0].getStart();
+        val workflowMap: MutableMap<String, Pair<String, String?>> = mutableMapOf()
 
-        flow1.add("direct:liability")
-        flow1.add("direct:blazedecision")
-
+        for (workflow in sourceWorkflow) {
+            workflowMap[workflow.getStart()] = Pair(workflow.getEnd(), workflow.getFailoverEndpoint())
+        }
 
         for (endpoint in endpoints.iterator()) {
 
-            from("direct:" + endpoint.getEndpointRouteName())
-                    .process(getRequestProcessor(endpoint.getEndpointProcessor(), endpoint.getEndpointRouteName(), sourceName))
-                    .to("log:DEBUG?showBody=true&showHeaders=true")
-                    .setHeader(Exchange.HTTP_METHOD, simple(endpoint.getEndpointRequestMethod()))
-                    .setHeader(Exchange.CONTENT_TYPE, constant(endpoint.getEndpointContentType()))
-                    .to(endpoint.getEndpointRequestType() + ":" + endpoint.getEndpointUrl())
-                    .process()
+            if (endpoint.getRouteType().equals("source",
+                            true)) {
+                sourceUrl = endpoint.getUrl()
+            } else {
+                from("direct:" + endpoint.getEndpointRouteName())
+                        .process(endpoint.getRequestProcessor()?.let {
+                            getRequestProcessor(it,
+                                    endpoint.getEndpointName(),
+                                    sourceName)
+                        })
+                        .to("log:DEBUG?showBody=true&showHeaders=true")
+                        .setHeader(Exchange.HTTP_METHOD, simple(endpoint.getRequestMethod()))
+                        .setHeader(Exchange.CONTENT_TYPE, constant(endpoint.getEndpointContentType()))
+                        .to(endpoint.getRequestType() + ":" + endpoint.getUrl())
+                        .process(endpoint.getResponseProcessor()?.let {
+                            getResponseProcessor(it,
+                                    endpoint.getEndpointName(),
+                                    endpoint.getEndpointRouteName(),
+                                    sourceName)
+                        })
+            }
         }
 
-        from("netty-http:$sourceUrl")
-                .pipeline(*flow0.toTypedArray()).choice()
-                .`when`(header(Headers.IDM.value).contains(false))
-                .pipeline(*flow2.toTypedArray())
-                .otherwise()
-                .pipeline(*flow1.toTypedArray())
+        // Workflow
 
+        from("netty-http:$sourceUrl").process(Processor() {
+            it.setProperty("Workflow", workflowMap)
+        })
+                .dynamicRouter(bean(DynamicRouteBean::class.java, "route(*, *, ${startEndpoint})"))
     }
 
     private fun processException(exceptionClassName: String): Throwable {

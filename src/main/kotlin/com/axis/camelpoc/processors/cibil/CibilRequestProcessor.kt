@@ -20,11 +20,16 @@ class CibilRequestProcessor : RequestProcessor() {
 
         log.info("User in Cibil Request processor: $user")
 
-        if (sourceName == "MLP-PL") {
-            val requestObj = CibilRequest(user)
-            val request: String = objectMapper.writeValueAsString(requestObj)
+        when(sourceName){
+            "MLP-PL" -> {
+                val requestObj = CibilRequest(user)
+                val request: String = objectMapper.writeValueAsString(requestObj)
 
-            exchange?.getIn()?.setBody(request, String::class.java)
+                exchange?.getIn()?.setBody(request, String::class.java)
+            }
+            else -> {
+                log.error("Invalid Source$sourceName")
+            }
         }
     }
 }
